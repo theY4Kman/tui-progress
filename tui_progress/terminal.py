@@ -283,7 +283,7 @@ class nested_tqdm(tqdm):
     def close(self):
         if self.leave:
             self.ncols = 0  # only show summary
-            self.indicator.complete(self.__repr__())
+            self.indicator.complete(self.__str__())
         else:
             self.indicator.stop()
 
