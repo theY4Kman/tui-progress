@@ -1,12 +1,17 @@
 import colorsys
 import math
 import statistics
-from collections import defaultdict, Sequence
+from collections import defaultdict
 from contextlib import contextmanager
 from typing import Any, Dict, Iterable, Set, Tuple
 
 from cached_property import cached_property
 from colorama import Style
+
+try:
+    from collections.abc import Sequence  # python >= 3.10
+except ImportError:
+    from collections import Sequence  # python <= 3.9
 
 try:
     import colormath
