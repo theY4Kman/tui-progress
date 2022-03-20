@@ -119,6 +119,7 @@ class AppendingHalo(NestedHalo):
     def __init__(self, text='', color='cyan', spinner=None, animation=None,
                  placement='left', interval=-1, enabled=True, stream=sys.stderr, **kwargs):
         self.original_text = text
+        self.printed_indicators: list[ProgressIndicator] = []
 
         super().__init__(text, color, spinner, animation, placement, interval,
                          enabled, stream, **kwargs)
@@ -127,6 +128,11 @@ class AppendingHalo(NestedHalo):
         # Don't return a value, because the exception is silenced otherwise.
         # (The original Halo class does this)
         super().__exit__(type, value, traceback)
+
+    def stop(self):
+        for indicator in self.printed_indicators:
+            indicator.complete(indicator.frame)
+        return super().stop()
 
     def _append_message(self, method, text=None, overwrite=False):
         if not overwrite:
@@ -148,9 +154,10 @@ class AppendingHalo(NestedHalo):
     def print(self, text: str = ''):
         """Print a message above the Halo line
         """
-        self.clear()
-        print(text)
-        self._render_frame()
+        indicator = ProgressIndicator(self._stream)
+        indicator.start()
+        indicator.update(text)
+        self.printed_indicators.append(indicator)
 
     def _print_with_symbol(self, symbol: str, text: str):
         self.print(f'{symbol} {text}')

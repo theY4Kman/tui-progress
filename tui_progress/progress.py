@@ -315,9 +315,13 @@ class _AsyncUpdateLoopBackend(_UpdateLoopBackend):
             self.task = None
 
     async def loop(self):
-        while True:
+        try:
+            while True:
+                self.update()
+                await asyncio.sleep(self.interval)
+        except asyncio.CancelledError:
             self.update()
-            await asyncio.sleep(self.interval)
+            await asyncio.sleep(0)
 
 
 class _SyncUpdateLoopBackend(_UpdateLoopBackend):
